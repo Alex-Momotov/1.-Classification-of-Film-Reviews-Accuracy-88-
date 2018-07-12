@@ -1,3 +1,0 @@
-Submission/
-data/"1. Original"/
-.idea/

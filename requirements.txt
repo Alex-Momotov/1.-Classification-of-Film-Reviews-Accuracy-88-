@@ -1,4 +1,0 @@
-numpy
-nltk
-memory_profiler
-sklearn
