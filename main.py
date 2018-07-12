@@ -5,6 +5,7 @@ from memory_profiler import memory_usage
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 from collections import Counter
+from zipfile import ZipFile
 from time import time
 import numpy as np
 import pickle
@@ -30,19 +31,21 @@ def memory_time(func):
 @memory_time
 def parse_data(dataset='positive', sample_size=10000):
     if dataset == 'positive':
-        path = r'data/2. Pickled/training/positives/'
+        path = r'data/trn_positives.zip'
     elif dataset == 'negative':
-        path = r'data/2. Pickled/training/negatives/'
+        path = r'data/trn_negatives.zip'
     elif dataset == 'testing':
-        path = r'data/2. Pickled/testing/'
+        path = r'data/testing.zip'
     bodies = []
     titles = []
-    for num, file in enumerate(os.listdir(path), start=1):
-        with open(path + file, 'rb') as f:
-            data = pickle.load(f)
-            bodies.append(data['body'])
-            titles.append(data['title'])
-        if num == sample_size: break
+    with ZipFile(path, 'r') as myzip:
+        name_list = myzip.namelist()
+        for num, name in enumerate(name_list, start=1):
+            with myzip.open(name, 'r') as myzip_data:
+                data = pickle.load(myzip_data)
+                bodies.append(data['body'])
+                titles.append(data['title'])
+            if num == sample_size: break
     return bodies, titles
 
 @memory_time
@@ -118,7 +121,6 @@ def normalise_unit_vec(BOW_matrix):
     np.save("Processing stages/TFIDF_matrix_normed.npy", TFIDF_matrix_normed)
     TFIDF_matrix_normed = np.load("Processing stages/TFIDF_matrix_normed.npy", mmap_mode='r')
     return TFIDF_matrix_normed
-
 
 #%% Load data
 sample_size = 2900
