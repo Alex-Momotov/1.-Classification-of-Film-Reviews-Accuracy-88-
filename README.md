@@ -1,4 +1,4 @@
-# Classification of Film Reviews, Accuracy: 88%
+# Classification of Film Reviews, Accuracy: 88.7%
 
 
 
