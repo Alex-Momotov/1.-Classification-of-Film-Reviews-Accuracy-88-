@@ -8,7 +8,7 @@
 
 ## Requirements
 
-- Python3.X
+- python 3.X
 
 - nltk
 
