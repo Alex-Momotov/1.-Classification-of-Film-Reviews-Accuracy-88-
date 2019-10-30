@@ -8,6 +8,8 @@
 
 ## Requirements
 
+- Python3.X
+
 - nltk
 
 - sklearn
