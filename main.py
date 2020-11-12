@@ -10,7 +10,6 @@ from time import time
 import numpy as np
 import pickle
 import re
-import os
 
 
 def memory_time(func):
@@ -27,6 +26,7 @@ def memory_time(func):
         print(f'\tcurrent memory: {memory_usage()[0]} Mb')
         return result
     return inner
+
 
 @memory_time
 def parse_data(dataset='positive', sample_size=10000):
@@ -48,6 +48,7 @@ def parse_data(dataset='positive', sample_size=10000):
             if num == sample_size: break
     return bodies, titles
 
+
 @memory_time
 def data_cleaning(data):
     """Punctuation removal, tokenisation, stemming."""
@@ -62,6 +63,7 @@ def data_cleaning(data):
         step4 = [sno.stem(word) for word in step3]               # returns stem of each word
         clean_data.append(step4)
     return clean_data
+
 
 @memory_time
 def create_lexicon(data, ignore_low, ignore_high):
@@ -82,6 +84,7 @@ def create_lexicon(data, ignore_low, ignore_high):
         lexicon_dict[word] = idx
     return lexicon_dict
 
+
 @memory_time
 def create_BOW_matrix(data, lexicon):
     """Creates and saves BOW matrix on disc, returns NumPy memory map of it."""
@@ -96,6 +99,7 @@ def create_BOW_matrix(data, lexicon):
     np.save("Processing stages/BOW_matrix.npy", BOW_matrix)
     BOW_matrix = np.load("Processing stages/BOW_matrix.npy", mmap_mode='r+')
     return BOW_matrix
+
 
 @memory_time
 def create_TFIDF_matrix(BOW_matrix):
@@ -113,6 +117,7 @@ def create_TFIDF_matrix(BOW_matrix):
     TFIDF_matrix = np.load("Processing stages/TFIDF_matrix.npy", mmap_mode='r')
     return TFIDF_matrix
 
+
 @memory_time
 def normalise_unit_vec(BOW_matrix):
     """Converts TF-IDF feature vectors into unit vectors, returns NumPy memory map of the new matrix."""
@@ -121,6 +126,7 @@ def normalise_unit_vec(BOW_matrix):
     np.save("Processing stages/TFIDF_matrix_normed.npy", TFIDF_matrix_normed)
     TFIDF_matrix_normed = np.load("Processing stages/TFIDF_matrix_normed.npy", mmap_mode='r')
     return TFIDF_matrix_normed
+
 
 #%% Load data
 sample_size = 2900
