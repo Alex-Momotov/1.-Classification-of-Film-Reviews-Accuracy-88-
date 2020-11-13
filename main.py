@@ -10,6 +10,8 @@ from time import time
 import numpy as np
 import pickle
 import re
+import nltk
+nltk.download('stopwords')
 
 
 def memory_time(func):
@@ -68,21 +70,18 @@ def data_cleaning(data):
 @memory_time
 def create_lexicon(data, ignore_low, ignore_high):
     """Returns dictionary-like lexicon, removes given number of most/least frequently occuring words."""
-    data_flat = [word for sublist in data for word in sublist]
-    data_counted = Counter(data_flat)
+    all_words = [word for sublist in data for word in sublist]
+    all_words_cnt = Counter(all_words)
     to_delete = []
-    for key, val in data_counted.items():
+    for key, val in all_words_cnt.items():
         if val < ignore_low: to_delete.append(key)
-    for key in sorted(data_counted, key=data_counted.get, reverse=True)[:ignore_high]:
+    for key in sorted(all_words_cnt, key=all_words_cnt.get, reverse=True)[:ignore_high]:
         to_delete.append(key)
     for key in to_delete:
-        del data_counted[key]
-    lexicon = list(data_counted)
+        del all_words_cnt[key]
+    lexicon = list(all_words_cnt)
     lexicon.sort()
-    lexicon_dict = {}
-    for idx, word in enumerate(lexicon):
-        lexicon_dict[word] = idx
-    return lexicon_dict
+    return {word:idx for idx, word in enumerate(lexicon)}
 
 
 @memory_time
@@ -94,7 +93,7 @@ def create_BOW_matrix(data, lexicon):
         for key, val in counter_obj.items():
             try:
                 word_idx = lexicon[key]
-                BOW_matrix[index,word_idx] = val
+                BOW_matrix[index, word_idx] = val
             except KeyError: pass
     np.save("Processing stages/BOW_matrix.npy", BOW_matrix)
     BOW_matrix = np.load("Processing stages/BOW_matrix.npy", mmap_mode='r+')
